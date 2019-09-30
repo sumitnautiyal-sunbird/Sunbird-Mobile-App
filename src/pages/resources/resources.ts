@@ -51,6 +51,7 @@ import { ProfileConstants } from '../../app';
 import { AppHeaderService } from '@app/service';
 import { GuestProfilePage } from '../profile';
 import { ProfilePage } from '../profile/profile';
+import { ChannelEmittorProvider } from '@app/providers/channel-emittor/channel-emittor';
 
 @Component({
   selector: 'page-resources',
@@ -164,7 +165,9 @@ export class ResourcesPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public toastController: ToastController,
     public menuCtrl: MenuController,
-    private headerServie: AppHeaderService
+    private headerServie: AppHeaderService,
+    public channelEmittorService:ChannelEmittorProvider
+
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -511,6 +514,10 @@ export class ResourcesPage implements OnInit, AfterViewInit {
     }
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
+    let channel = this.channelEmittorService.channel$.value;
+    let channelArray = [];
+    channelArray.push(channel);
+    this.getGroupByPageReq.channel = channelArray;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
     this.getGroupByPage(isAfterLanguageChange,avoidRefreshList);
   }

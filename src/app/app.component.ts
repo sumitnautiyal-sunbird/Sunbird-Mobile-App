@@ -48,7 +48,7 @@ import { CoursesPage } from '@app/pages/courses/courses';
 import { ProfilePage } from '@app/pages/profile/profile';
 import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
 import { QrCodeResultPage } from '@app/pages/qr-code-result';
-
+import {ChannelEmittorProvider} from '../providers/channel-emittor/channel-emittor'
 @Component({
   templateUrl: 'app.html',
   providers: [
@@ -104,7 +104,8 @@ export class MyApp implements OnInit, AfterViewInit {
     private splashscreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
     private headerServie: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
-    private network: Network
+    private network: Network,
+    public channelEmittorService: ChannelEmittorProvider
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
@@ -379,7 +380,10 @@ export class MyApp implements OnInit, AfterViewInit {
       this.profileService.getActiveSessionProfile({
         requiredFields: ProfileConstants.REQUIRED_FIELDS
       }).toPromise()
-        .then(async (profile: any) => {
+        .then(async (profile: any) => {console.log('userprofile',profile)
+          this.channelEmittorService.getChannelId(profile['serverProfile']['rootOrgId']);
+          this.channelEmittorService.getFrameWorkId(profile['syllabus']);
+          
           if (profile
             && profile.syllabus && profile.syllabus[0]
             && profile.board && profile.board.length

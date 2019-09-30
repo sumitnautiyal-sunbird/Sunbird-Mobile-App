@@ -29,6 +29,7 @@ import {Environment, ImpressionType, LogLevel, PageId, InteractType, InteractSub
 import {Subscription} from 'rxjs';
 import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
 import { AppHeaderService } from '@app/service';
+import {ChannelEmittorProvider} from '@app/providers/channel-emittor/channel-emittor';
 
 @IonicPage()
 @Component({
@@ -155,7 +156,8 @@ export class ViewMoreActivityPage implements OnInit {
     private courseUtilService: CourseUtilService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private headerServie: AppHeaderService
+    private headerServie: AppHeaderService,
+    public channelEmittorService: ChannelEmittorProvider
   ) {
     this.defaultImg = 'assets/imgs/ic_launcher.png';
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
@@ -218,6 +220,7 @@ export class ViewMoreActivityPage implements OnInit {
     };
     this.searchQuery.request['searchType'] = SearchType.FILTER;
     this.searchQuery.request['offset'] = this.offset;
+    this.searchQuery.request.filters['channel'] = this.channelEmittorService.channel$.value;
     this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
       .then((data: ContentSearchResult) => {
         this.ngZone.run(() => {

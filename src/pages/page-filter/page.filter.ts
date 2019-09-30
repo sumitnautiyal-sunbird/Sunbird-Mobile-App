@@ -16,7 +16,7 @@ import {
   PageAssembleFilter
 } from 'sunbird-sdk';
 import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../service/telemetry-constants';
-
+import { ChannelEmittorProvider } from '../../providers/channel-emittor/channel-emittor'
 @Component({
   selector: 'page-filter',
   templateUrl: './page.filter.html'
@@ -45,6 +45,7 @@ export class PageFilter {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    public channelEmittorService: ChannelEmittorProvider,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService
   ) {
     this.callback = navParams.get('callback');
@@ -136,10 +137,12 @@ export class PageFilter {
     } else {
       frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
     }
+    frameworkId = this.channelEmittorService.frameWorkId$.value[0];
+    console.log('frameworkId from user',frameworkId);
     let index = 0;
     for (const element of this.filters) {
       try {
-        if (!element.frameworkCategory && this.pageId === PageId.COURSE_PAGE_FILTER) {
+        if (element.frameworkCategory && this.pageId === PageId.COURSE_PAGE_FILTER) {
           await this.getRootOrganizations(index);
         } else {
           await this.getFrameworkData(frameworkId, element.code, index);
@@ -172,6 +175,7 @@ export class PageFilter {
       this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
         .then((res: CategoryTerm[]) => {
           const category = res;
+          console.log(res,'categoryterms');
           // this.filters[index].name = category.name;  // Assign the lable from framework
 
           const responseArray = category;

@@ -357,6 +357,7 @@ export class CategoriesEditPage {
    */
 
   submitForm(formVal) {
+    console.log('formvalues',formVal);
     this.loader.present();
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,

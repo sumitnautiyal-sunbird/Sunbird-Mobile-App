@@ -151,7 +151,7 @@ android {
             flavorDimensions "default"
         }
 
-        staging {
+        /* staging {
             applicationId "${staging_app_id}"
             flavorDimensions "default"
             resValue("string", "deeplink_base_url", "${staging_deeplink_base_url}")
@@ -227,7 +227,7 @@ android {
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${production_mobile_app_secret}\""
             buildConfigField 'String', 'OAUTH_SESSION', '"org.genie.KeycloakOAuthSessionService"'
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${production_oauth_redirect_url}\""
-        }
+        } */
     }
 
     task myclean(type: Delete,overwrite: true) {

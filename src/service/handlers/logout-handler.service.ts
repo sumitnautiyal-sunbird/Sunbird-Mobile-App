@@ -46,7 +46,12 @@ export class LogoutHandlerService {
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN)
       .do(async (guest_user_id: string) => {
         if (!guest_user_id) {
-          await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+          await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise()
+          .then(async () => {
+            await this.authService.resignSession().toPromise();
+            this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+            await this.navigateToAptPage();
+          });
         }
       })
       .mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id))

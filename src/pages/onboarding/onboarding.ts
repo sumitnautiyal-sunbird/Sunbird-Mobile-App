@@ -2,7 +2,7 @@ import {FormAndFrameworkUtilService} from './../profile/formandframeworkutil.ser
 import {Component, Inject, ViewChild} from '@angular/core';
 import {Events, LoadingController, Navbar, NavController, Platform} from 'ionic-angular';
 import {AppVersion} from '@ionic-native/app-version';
-
+import { ChannelEmittorProvider } from '../../providers/channel-emittor/channel-emittor'
 
 import {UserTypeSelectionPage} from '@app/pages/user-type-selection';
 import {
@@ -70,7 +70,8 @@ export class OnboardingPage {
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    public channeEmittorService: ChannelEmittorProvider
   ) {
 
     this.slides = [
@@ -109,6 +110,8 @@ export class OnboardingPage {
   }
 
   ionViewWillEnter() {
+    this.headerService.hideHeader();
+    console.log('loggedIn',this.appGlobalService.isUserLoggedIn());
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -168,7 +171,7 @@ export class OnboardingPage {
       .then((res) => {
           this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
           this.preferences.putString(PreferenceKey.APP_NAME, that.orgName).toPromise().then();
-          (<any>window).splashscreen.setContent(that.orgName, res.logo);
+          //(<any>window).splashscreen.setContent(that.orgName, res.logo);
           resolve();
         }).catch(() => {
         resolve(); // ignore
@@ -190,6 +193,11 @@ export class OnboardingPage {
           that.profileService.getServerProfilesDetails(req).toPromise()
             .then((success) => {
               setTimeout(() => {
+                let profile = this.appGlobalService.getCurrentUser();
+                this.channeEmittorService.getFrameWorkId(profile['syllabus']);
+              },3000);
+              this.channeEmittorService.getChannelId(success['rootOrgId']);
+              setTimeout(() => {
                 this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', success.firstName));
               }, 800);
               that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
@@ -210,16 +218,16 @@ export class OnboardingPage {
                       this.formAndFrameworkUtilService.updateLoggedInUser(success, profile)
                         .then((value) => {
                           that.orgName = success.rootOrg.orgName;
-                          if (value['status']) {
+                          /* if (value['status']) { */
                             initTabs(that.container, LOGIN_TEACHER_TABS);
                             resolve(success.rootOrg.slug);
-                          } else {
+                          /* } else {
                             that.navCtrl.setRoot(CategoriesEditPage, {
                               showOnlyMandatoryFields: true,
                               profile: value['profile']
                             });
                             reject();
-                          }
+                          } */
                           // that.orgName = r.rootOrg.orgName;
                           // resolve(r.rootOrg.slug);
                         }).catch(() => {

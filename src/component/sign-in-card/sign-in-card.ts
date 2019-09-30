@@ -142,7 +142,7 @@ export class SignInCardComponent {
               requiredFields: ProfileConstants.REQUIRED_FIELDS
             };
             that.profileService.getServerProfilesDetails(req).toPromise()
-              .then((success) => {
+              .then((success) => { console.log('success from sign in card',success);
                 that.generateLoginInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGIN_SUCCESS, success.id);
                 const profile: Profile = {
                   uid: success.id,
@@ -186,7 +186,7 @@ export class SignInCardComponent {
         .then((res) => {
           this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
           this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
-          (<any>window).splashscreen.setContent(title, res.logo);
+          //(<any>window).splashscreen.setContent(title, res.logo);
           resolve();
         }).catch(() => {
           resolve(); // ignore

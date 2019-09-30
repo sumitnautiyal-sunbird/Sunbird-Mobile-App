@@ -33,6 +33,7 @@ import { AndroidPermissionsService } from '@app/service/android-permissions/andr
 import { ComponentsModule } from '@app/component/components.module';
 import { ContainerService } from '@app/service/container.services';
 import { DirectivesModule } from '@app/directives/directives.module';
+import { ChannelEmittorProvider } from '../providers/channel-emittor/channel-emittor';
 
 export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -332,7 +333,8 @@ export const sunbirdSdkFactory =
     AndroidPermissionsService,
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
+    { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true },
+    ChannelEmittorProvider
   ],
   exports: [
     BroadcastComponent

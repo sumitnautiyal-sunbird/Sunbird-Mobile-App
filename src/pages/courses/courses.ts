@@ -39,6 +39,7 @@ import {
 import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../service/telemetry-constants';
 import {Subscription} from 'rxjs';
 import { AppHeaderService } from '@app/service';
+import { ChannelEmittorProvider } from '../../providers/channel-emittor/channel-emittor'
 
 @IonicPage()
 @Component({
@@ -147,7 +148,8 @@ export class CoursesPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public menuCtrl: MenuController,
     public toastController: ToastController,
-    private headerServie: AppHeaderService
+    private headerServie: AppHeaderService,
+    public channelEmittorService:ChannelEmittorProvider
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -364,7 +366,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
     if (pageAssembleCriteria === undefined) {
       const criteria: PageAssembleCriteria = {
         name: PageName.COURSE,
-        filters: {},
+        filters: {channel: this.channelEmittorService.channel$.value},
         source: 'app'
       };
       criteria.mode = 'soft';
@@ -409,7 +411,8 @@ export class CoursesPage implements OnInit, AfterViewInit {
     }
 
     // pageAssembleCriteria.hardRefresh = hardRefresh;
-
+    pageAssembleCriteria.filters.channel = this.channelEmittorService.channel$.value;
+    console.log('pageassemblecriteria',pageAssembleCriteria)
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
       .then((res: any) => {
         this.ngZone.run(() => {
@@ -643,6 +646,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
     } else {
       // TODO: Need to add loader
       this.formAndFrameworkUtilService.getCourseFilterConfig().then((data) => {
+        console.log('data from coursefilter',data);
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
       }).catch(() => {

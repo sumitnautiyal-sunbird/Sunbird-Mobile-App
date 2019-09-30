@@ -234,6 +234,12 @@ export const appLanguages = [
         code: 'ur',
         isApplied: false,
         name: 'Urdu'
+    },
+    {
+        label: 'Español',
+        code: 'es',
+        isApplied: true,
+        name: 'Spanish'
     }
 ];
 

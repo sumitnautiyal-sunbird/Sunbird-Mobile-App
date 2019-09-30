@@ -47,6 +47,7 @@ export class LanguageSettingsPage {
    }
 
   ionViewDidLoad() {
+    this.translateService.use('es');
     this.isFromSettings = this.navParams.get('isFromSettings');
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
@@ -76,7 +77,7 @@ export class LanguageSettingsPage {
     }, 10);
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter() {console.log('into language willenter');
     this.selectedLanguage = {};
     if (!this.isFromSettings) {
       this.headerServie.hideHeader();
@@ -88,7 +89,7 @@ export class LanguageSettingsPage {
     this.init();
   }
 
-  ionViewWillLeave() {
+  ionViewWillLeave() {console.log('into language willleave');
     if (this.isLanguageSelected) {
       if (!this.selectedLanguage.code) {
         if (this.previousLanguage) {
