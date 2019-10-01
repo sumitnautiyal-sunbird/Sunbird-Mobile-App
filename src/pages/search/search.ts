@@ -61,6 +61,7 @@ import {
 import {TabsPage} from '@app/pages/tabs/tabs';
 import { AppHeaderService } from '@app/service';
 import { EnrollmentDetailsPage } from '../enrolled-course-details/enrollment-details/enrollment-details';
+import { ChannelEmittorProvider } from '@app/providers/channel-emittor/channel-emittor';
 
 declare const cordova;
 
@@ -153,7 +154,8 @@ export class SearchPage implements  OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    public channelEmittorService:ChannelEmittorProvider
   ) {
 
     this.checkUserSession();
@@ -380,6 +382,9 @@ export class SearchPage implements  OnDestroy {
   }
 
   handleSearch() {
+    let channel = this.channelEmittorService.channel$.value;
+    let channelArray = [];
+    channelArray.push(channel);
     if (this.searchKeywords.length < 3) {
       return;
     }
@@ -396,7 +401,9 @@ export class SearchPage implements  OnDestroy {
       audience: this.audienceFilter,
       mode: 'soft',
       framework: this.currentFrameworkId,
-      languageCode: this.selectedLanguageCode
+      languageCode: this.selectedLanguageCode,
+      channel: channelArray,
+      offset: 0,
     };
 
     this.isDialCodeSearch = false;

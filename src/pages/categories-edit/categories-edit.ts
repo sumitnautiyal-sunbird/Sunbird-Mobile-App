@@ -75,6 +75,7 @@ export class CategoriesEditPage {
     title: this.commonUtilService.translateMessage('SUBJECTS').toLocaleUpperCase(),
     cssClass: 'select-box'
   };
+  frameworkID: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -147,6 +148,7 @@ export class CategoriesEditPage {
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then((result: Framework[]) => {
+        this.frameworkId = result[0].identifier;
         if (result && result.length) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
@@ -154,9 +156,9 @@ export class CategoriesEditPage {
             this.syllabusList.push(value);
           });
 
-          if (this.profile && this.profile.syllabus && this.profile.syllabus[0] !== undefined) {
+          if (this.profile) {
             const frameworkDetailsRequest: FrameworkDetailsRequest = {
-              frameworkId: this.profile.syllabus[0],
+              frameworkId: this.profile.syllabus[0] || this.frameworkId,
               requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
             };
             this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -225,7 +227,7 @@ export class CategoriesEditPage {
    */
   fetchNextCategoryOptionsValues(index: number, currentField: string, selectedValue: Array<string>) {
     if (index === 1) {
-      this.frameworkId = selectedValue[0];
+      //this.frameworkId = selectedValue[0];
       if (this.frameworkId.length !== 0) {
         const frameworkDetailsRequest: FrameworkDetailsRequest = {
           frameworkId: this.frameworkId,
